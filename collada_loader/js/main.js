@@ -74,7 +74,6 @@ var main = function() {
 		camera.position.y = 2;
 		camera.position.z = Math.sin( timer ) * 10;
 		camera.lookAt( scene.position );
-		THREE.AnimationHandler.update( clock.getDelta() );
 	}
 
 	// 
