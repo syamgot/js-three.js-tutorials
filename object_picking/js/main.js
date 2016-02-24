@@ -59,9 +59,8 @@ var main = function() {
 	projector 	= new THREE.Projector();
 	mouseVector = new THREE.Vector3();
 
-	// 
-	document.addEventListener( 'mousemove', function(e){
-
+	// mousemove event handler
+	function onMouseMove(e) {
 		event.preventDefault();
 		var raycaster 	= new THREE.Raycaster();
 		var mouse 		= new THREE.Vector2();
@@ -78,9 +77,39 @@ var main = function() {
 			obj = intersection.object;
 			obj.material.color.setRGB( 1.0 - i / intersects.length, 0, 0 );
 		}
+	}
+	document.addEventListener( 'mousemove', onMouseMove, false);
 
-	}, false);
 
+	// initialize orientation controls 
+	function initOrientationControls(e) {
+		if (!e.alpha) {
+			return;
+		}
+		controls = new THREE.DeviceOrientationControls(camera, true);
+		window.removeEventListener('deviceorientation', initOrientationControls, true);
+		window.addEventListener('deviceorientation', onDeviceOrientation, true);
+	}
+	window.addEventListener('deviceorientation', initOrientationControls, true);
+
+	// deviceorientation event handler
+	function onDeviceOrientation(e) {
+
+		event.preventDefault();
+		var raycaster 	= new THREE.Raycaster();
+		raycaster.setFromCamera( new THREE.Vector2(), camera ); 
+		var intersects = raycaster.intersectObjects(cubes.children);
+
+		cubes.children.forEach(function( cube ) {
+			cube.material.color.setRGB( cube.grayness, cube.grayness, cube.grayness );
+		});
+		for( var i = 0; i < intersects.length; i++ ) {
+			var intersection = intersects[ i ],
+			obj = intersection.object;
+			obj.material.color.setRGB( 1.0 - i / intersects.length, 0, 0 );
+		}
+
+	}
 
 
 	// 
